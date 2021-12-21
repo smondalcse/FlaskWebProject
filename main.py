@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template
+from employee import Employee as imported_employee
 
 app = Flask(__name__)
 
@@ -42,6 +43,11 @@ def home_page():
 
 @app.route('/home',  methods=['POST', 'GET'])
 def home():
+
+    # How to access Class and object
+    # obj_imp_emp = imported_employee("4", "AlimUddin", "20150551", "IT", "Manager", "22000")
+    # obj_imp_emp.name
+
     x = dict()
     emp_id = request.form["emp_id"]
     if request.form['action'] == 'Login':
