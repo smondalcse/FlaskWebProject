@@ -1,5 +1,8 @@
 from flask import Flask, request, render_template
 from employee import Employee as imported_employee
+import pandas as pd
+import DBConnection
+import pymssql
 
 app = Flask(__name__)
 
@@ -65,6 +68,44 @@ def home():
 @app.route('/show_emp',  methods=['POST'])
 def show_emp():
     return "show emp"
+
+
+@app.route('/db_conn', methods=['get'])
+def db_conn():
+    # connc = DBConnection.Connection('SQL Server', 'ITDEV22', 'NMLCustomerInfo', 'sa', '123', 'yes')
+    connc = DBConnection.Connection('SQL Server', '192.168.11.57', 'NMLSALES2122', 'adminsales', 'Ad@MSsql2014', 'yes')
+    conn = connc.db_connect()
+    return 'success'
+
+
+# @app.route('/get_user_from_db', methods=['get'])
+# def get_user_from_db():
+#     conn = db_conn()
+#     cursor = conn.cursor()
+#     cursor.execute('select top(10)* from tblUsers')
+#     for row in cursor:
+#         print(row)
+#     return 'success'
+#
+#
+# @app.route('/get_user_using_sp', methods=['get'])
+# def get_user_using_sp():
+#     conn = db_conn()
+#     sp = 'EXEC sp_getAllUsers @EmpID = {0}, @IsActive = {1}'.format('null', 0)
+#     result = pd.read_sql_query(sp, conn)
+#     print(result)
+#     return 'success'
+
+
+@app.route('/dbconectwithpy', methods=['get'])
+def dbconectwithpy():
+    conn = DBConnection.Connection.db_connect_pymssql('192.168.11.57', 'adminsales', 'Ad@MSsql2014', 'NMLSALES2122')
+    cursor = conn.cursor(as_dict=True)
+    cursor.execute('select EmpID, FullName, Phone  from tblUsers where empid = \'20170546\'')
+    data = cursor.fetchall()
+    print(data)
+    cursor.close()
+    return 'success'
 
 
 if __name__ == "__main__":
