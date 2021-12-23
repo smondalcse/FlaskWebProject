@@ -45,6 +45,11 @@ def home_page():
     return render_template('login.html')
 
 
+@app.route('/sales_forecasting')
+def sales_forecasting():
+    return render_template('sales_forecasting.html')
+
+
 @app.route('/home',  methods=['POST', 'GET'])
 def home():
 
@@ -89,17 +94,22 @@ def get_user_from_db():
     return 'success'
 
 
-@app.route('/get_user_using_sp', methods=['get'])
+@app.route('/get_user_using_sp', methods=['POST'])
 def get_user_using_sp():
+    year = request.form["year"]
+    print(year)
     conn = dbconectwithpy()
     sp = 'EXEC getSalesPredictionData_yearly'.format()
     result = pd.read_sql_query(sp, conn)
     print(result)
-    lin_prediction_data = Predictor.Predictor.linear_prediction(result, 2021)
-    poly_prediction_data = Predictor.Predictor.polynomial_prediction(result, 2021)
+    lin_prediction_data = Predictor.Predictor.linear_prediction(result, year)
+    poly_prediction_data = Predictor.Predictor.polynomial_prediction(result, year)
     x = 'lin_prediction_data ==>> ', lin_prediction_data[0], '. poly_prediction_data ==>>', poly_prediction_data[0]
     print(x)
-    return str(x)
+    return render_template("sales_forecasting.html",
+                           prediction_text='Linear Prediction: {}, '
+                                           'Polynomial Prediction: {}'.format(lin_prediction_data[0],
+                                                                        poly_prediction_data[0]))
 
 
 @app.route('/dbconectwithpy', methods=['get'])
@@ -107,6 +117,10 @@ def dbconectwithpy():
     conn = DBConnection.Connection.db_connect_pymssql('192.168.11.57', 'adminsales', 'Ad@MSsql2014', 'NMLSALES2122')
     # cursor = conn.cursor(as_dict=True)
     return conn
+
+
+def model_data(result):
+    result.to_csv("model.csv", index=False)
 
 
 if __name__ == "__main__":

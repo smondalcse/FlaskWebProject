@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Forecasting</title>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('get_user_using_sp') }}">
+        <h2>Sales Prediction</h2>
+        <label>Year:  </label>
+        <input name="year">
+        <input name="action" type="submit" value="Prediction">
+        <br/><br/>
+        <h3>
+        {{ prediction_text }}
+        </h3>
+    </form>
+</body>
+</html>
